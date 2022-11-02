@@ -1,4 +1,8 @@
-let timeout = 60 * 30; // 请求超时后等待半小时再执行，单位：秒
+const FIRST_WAIT_TIMEOUT = 60 * 30;
+const CACHE_KEY = "auto-like-timeout";
+
+let cacheTimeout = localStorage.getItem(CACHE_KEY);
+let timeout = cacheTimeout || FIRST_WAIT_TIMEOUT;
 
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t * 1000));
 
@@ -41,10 +45,13 @@ const like = async () => {
 
       const timeout = document.querySelector('[class*="Notification-red"]');
       if (timeout) {
-        console.log("timeout");
+        console.log("auto like timeout");
         buttons.unshift(item);
-        await sleep(timeout);
-        timeout += timeout; // 每超时一次，等待时间就翻倍
+
+        await sleep(cacheTimeout || timeout);
+        timeout += timeout;
+        localStorage.setItem(CACHE_KEY, timeout);
+        cacheTimeout = timeout;
       }
     }
   }
