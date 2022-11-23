@@ -40,6 +40,7 @@ const like = async () => {
     let item;
 
     while ((item = buttons.shift())) {
+      item.scrollIntoView({ behavior: "smooth" });
       item.click();
       await sleep(2);
 
